@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AkilliSulama.Business/AkilliSulama.Business.csproj" Id="3e9000a5-30af-4f3f-84e5-c8486f601644" />
+  <Project Path="AkilliSulama.Data/AkilliSulama.Data.csproj" Id="d59fb0a3-456b-47bd-a1cf-99391024a3c2" />
+  <Project Path="AkilliSulama.Entities/AkilliSulama.Entities.csproj" Id="601bc93a-6e3d-499e-bd2f-2548ab769c3b" />
+  <Project Path="AkilliSulama.Web/AkilliSulama.Web.csproj" />
+</Solution>
