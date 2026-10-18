@@ -1,4 +1,6 @@
+using AkilliSulama.Business;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddIsKatmani(builder.Configuration.GetConnectionString("AkilliSulamaDb")!);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
