@@ -9,6 +9,8 @@ public static class DataServiceExtensions
     public static IServiceCollection AddDataKatmani(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<AkilliSulamaDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddScoped<ParselRepository>();
         return services;
+        
     }
 }

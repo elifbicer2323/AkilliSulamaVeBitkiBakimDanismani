@@ -9,6 +9,7 @@ public static class IsKatmaniServiceExtensions
     public static IServiceCollection AddIsKatmani(this IServiceCollection services, string connectionString)
     {
         services.AddDataKatmani(connectionString);
+        services.AddScoped<ParselServisi>();
         return services;
     }
 }
