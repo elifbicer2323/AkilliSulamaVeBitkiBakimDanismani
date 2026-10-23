@@ -3,54 +3,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AkilliSulama.Data;
 
-// Parsel tablosu için temel CRUD işlemleri
 public class ParselRepository
 {
     private readonly AkilliSulamaDbContext _db;
     public ParselRepository(AkilliSulamaDbContext db) => _db = db;
 
-    // CREATE: Yeni parsel ekler  (SQL: INSERT INTO Parseller ...)
-    public async Task<Parsel> EkleAsync(Parsel parsel)
-    {
-        _db.Parseller.Add(parsel);
-        await _db.SaveChangesAsync();
-        return parsel;
-    }
-
-    // READ: Bir kullanıcının parsellerini bitkileriyle listeler  (SQL: SELECT ... WHERE KullaniciId = @id)
+    // READ: Kullanıcının parselleri, bitkileri ve türleriyle
     public Task<List<Parsel>> KullanicininParselleriAsync(int kullaniciId) =>
         _db.Parseller
            .Where(p => p.KullaniciId == kullaniciId)
-           .Include(p => p.Bitkiler)
+           .Include(p => p.Bitkiler).ThenInclude(b => b.BitkiTuru)
            .AsNoTracking()
+           .OrderBy(p => p.Ad)
            .ToListAsync();
 
-    // READ: Tek parseli getirir
-    public Task<Parsel?> GetirAsync(int parselId) =>
-        _db.Parseller.Include(p => p.Bitkiler).FirstOrDefaultAsync(p => p.ParselId == parselId);
+    // SAHİPLİK: Parsel sadece SAHİBİNE getirilir; başkasınınsa null döner
+    public Task<Parsel?> KullanicininParseliAsync(int parselId, int kullaniciId) =>
+        _db.Parseller
+           .Include(p => p.Bitkiler).ThenInclude(b => b.BitkiTuru)
+           .FirstOrDefaultAsync(p => p.ParselId == parselId && p.KullaniciId == kullaniciId);
 
-    // UPDATE: Parsel bilgilerini günceller  (SQL: UPDATE Parseller SET ... WHERE ParselId = @id)
-    public async Task<bool> GuncelleAsync(Parsel guncel)
+    public Task<bool> AyniIsimVarMiAsync(int kullaniciId, string ad, int? haricParselId = null) =>
+        _db.Parseller.AnyAsync(p => p.KullaniciId == kullaniciId && p.Ad == ad && p.ParselId != (haricParselId ?? 0));
+
+    public async Task EkleAsync(Parsel parsel)
     {
-        var mevcut = await _db.Parseller.FindAsync(guncel.ParselId);
-        if (mevcut is null) return false;
-
-        mevcut.Ad = guncel.Ad;
-        mevcut.Konum = guncel.Konum;
-        mevcut.Alan = guncel.Alan;
-        mevcut.ToprakTuru = guncel.ToprakTuru;
+        _db.Parseller.Add(parsel);
         await _db.SaveChangesAsync();
-        return true;
     }
 
-    // DELETE: Parseli siler  (SQL: DELETE FROM Parseller WHERE ParselId = @id)
-    public async Task<bool> SilAsync(int parselId)
-    {
-        var mevcut = await _db.Parseller.FindAsync(parselId);
-        if (mevcut is null) return false;
+    public Task KaydetAsync() => _db.SaveChangesAsync();
 
-        _db.Parseller.Remove(mevcut);
+    public async Task SilAsync(Parsel parsel)
+    {
+        _db.Parseller.Remove(parsel); // Bitkileri de silinir (Cascade)
         await _db.SaveChangesAsync();
-        return true;
     }
 }

@@ -1,0 +1,75 @@
+﻿@model AkilliSulama.Entities.Parsel
+@{
+    ViewData["Title"] = Model.Ad;
+    int toplamBitki = Model.Bitkiler.Sum(b => b.Adet);
+    int kapasite = (int)(Model.Alan * 10);
+}
+
+<a asp-action="Index">&larr; Parsellerim</a>
+
+<div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+    <h2>@Model.Ad</h2>
+    <a asp-action="Duzenle" asp-route-id="@Model.ParselId" class="btn btn-outline-secondary">Parseli düzenle</a>
+</div>
+
+@if (TempData["Bilgi"] is string bilgi)
+{
+    <div class="alert alert-success">@bilgi</div>
+}
+@if (TempData["Hata"] is string hata)
+{
+    <div class="alert alert-danger">@hata</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3"><strong>Alan:</strong> @Model.Alan.ToString("0.##") m²</div>
+            <div class="col-md-3"><strong>Toprak:</strong> @Model.ToprakTuru</div>
+            <div class="col-md-6"><strong>Konum:</strong> @Model.Il @Model.Ilce @Model.Konum</div>
+        </div>
+        @if (Model.Enlem is not null)
+        {
+            <div class="mt-2"><strong>Koordinat:</strong> @Model.Enlem ; @Model.Boylam</div>
+        }
+        <div class="mt-2"><strong>Kapasite:</strong> @toplamBitki / @kapasite bitki (m² başına en fazla 10)</div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4>Bitkiler</h4>
+    <a asp-controller="Bitki" asp-action="Ekle" asp-route-parselId="@Model.ParselId" class="btn btn-success">+ Bitki Ekle</a>
+</div>
+
+@if (!Model.Bitkiler.Any())
+{
+    <p class="text-muted">Bu parselde henüz bitki yok.</p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr><th>Ad</th><th>Tür</th><th>Adet</th><th>Ekim</th><th>Önerilen sulama</th><th>Güneş</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Model.Bitkiler.OrderBy(x => x.Ad))
+            {
+                <tr>
+                    <td>@b.Ad</td>
+                    <td>@b.BitkiTuru.Ad <span class="text-muted">(@b.BitkiTuru.Kategori)</span></td>
+                    <td>@b.Adet</td>
+                    <td>@b.EkimTarihi.ToString("dd.MM.yyyy")</td>
+                    <td>@b.BitkiTuru.OnerilenSulamaAraligiGun günde bir, toplam @((b.Adet * b.BitkiTuru.BitkiBasinaSuLitre).ToString("0.#")) L</td>
+                    <td>@b.BitkiTuru.GunesIhtiyaci</td>
+                    <td class="text-end">
+                        <a asp-controller="Bitki" asp-action="Duzenle" asp-route-id="@b.BitkiId" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                        <form asp-controller="Bitki" asp-action="Sil" asp-route-id="@b.BitkiId" method="post" class="d-inline"
+                              onsubmit="return confirm('Bitki silinsin mi?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

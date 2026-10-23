@@ -30,6 +30,7 @@
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Parsel" asp-action="Index">Parsellerim</a></li>
                             <li class="nav-item">
                                 <span class="nav-link text-dark">Merhaba, @User.Identity.Name (@(User.IsInRole("Yonetici") ? "Yönetici" : "Çiftçi"))</span>
                             </li>

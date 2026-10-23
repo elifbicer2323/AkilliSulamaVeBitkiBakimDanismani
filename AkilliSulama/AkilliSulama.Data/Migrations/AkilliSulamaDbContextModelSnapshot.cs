@@ -35,55 +35,186 @@ namespace AkilliSulama.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("Adet")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BitkiTuruId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EkimTarihi")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Notlar")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("ParselId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Tur")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.HasKey("BitkiId");
+
+                    b.HasIndex("BitkiTuruId");
 
                     b.HasIndex("ParselId");
 
-                    b.ToTable("Bitkiler", (string)null);
+                    b.ToTable("Bitkiler", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Bitki_Adet", "[Adet] > 0");
+                        });
 
                     b.HasData(
                         new
                         {
                             BitkiId = 1,
                             Ad = "Domates",
+                            Adet = 10,
+                            BitkiTuruId = 1,
                             EkimTarihi = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ParselId = 1,
-                            Tur = "Sebze"
+                            ParselId = 1
                         },
                         new
                         {
                             BitkiId = 2,
                             Ad = "Biber",
+                            Adet = 8,
+                            BitkiTuruId = 2,
                             EkimTarihi = new DateTime(2026, 5, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ParselId = 1,
-                            Tur = "Sebze"
+                            ParselId = 1
                         },
                         new
                         {
                             BitkiId = 3,
                             Ad = "Marul",
+                            Adet = 20,
+                            BitkiTuruId = 3,
                             EkimTarihi = new DateTime(2026, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ParselId = 2,
-                            Tur = "Yeşillik"
+                            ParselId = 2
                         },
                         new
                         {
                             BitkiId = 4,
                             Ad = "Fesleğen",
+                            Adet = 3,
+                            BitkiTuruId = 4,
                             EkimTarihi = new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ParselId = 3,
-                            Tur = "Aromatik"
+                            ParselId = 3
+                        });
+                });
+
+            modelBuilder.Entity("AkilliSulama.Entities.BitkiTuru", b =>
+                {
+                    b.Property<int>("BitkiTuruId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BitkiTuruId"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("BitkiBasinaSuLitre")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("GunesIhtiyaci")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Kategori")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("OnerilenSulamaAraligiGun")
+                        .HasColumnType("int");
+
+                    b.HasKey("BitkiTuruId");
+
+                    b.HasIndex("Ad")
+                        .IsUnique();
+
+                    b.ToTable("BitkiTurleri", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_BitkiTuru_Aralik", "[OnerilenSulamaAraligiGun] > 0");
+
+                            t.HasCheckConstraint("CK_BitkiTuru_Su", "[BitkiBasinaSuLitre] > 0");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            BitkiTuruId = 1,
+                            Ad = "Domates",
+                            BitkiBasinaSuLitre = 3.0m,
+                            GunesIhtiyaci = "Tam güneş",
+                            Kategori = "Sebze",
+                            OnerilenSulamaAraligiGun = 2
+                        },
+                        new
+                        {
+                            BitkiTuruId = 2,
+                            Ad = "Biber",
+                            BitkiBasinaSuLitre = 2.5m,
+                            GunesIhtiyaci = "Tam güneş",
+                            Kategori = "Sebze",
+                            OnerilenSulamaAraligiGun = 2
+                        },
+                        new
+                        {
+                            BitkiTuruId = 3,
+                            Ad = "Marul",
+                            BitkiBasinaSuLitre = 1.5m,
+                            GunesIhtiyaci = "Yarı gölge",
+                            Kategori = "Yeşillik",
+                            OnerilenSulamaAraligiGun = 1
+                        },
+                        new
+                        {
+                            BitkiTuruId = 4,
+                            Ad = "Fesleğen",
+                            BitkiBasinaSuLitre = 0.5m,
+                            GunesIhtiyaci = "Tam güneş",
+                            Kategori = "Aromatik",
+                            OnerilenSulamaAraligiGun = 3
+                        },
+                        new
+                        {
+                            BitkiTuruId = 5,
+                            Ad = "Salatalık",
+                            BitkiBasinaSuLitre = 3.0m,
+                            GunesIhtiyaci = "Tam güneş",
+                            Kategori = "Sebze",
+                            OnerilenSulamaAraligiGun = 1
+                        },
+                        new
+                        {
+                            BitkiTuruId = 6,
+                            Ad = "Çilek",
+                            BitkiBasinaSuLitre = 1.0m,
+                            GunesIhtiyaci = "Tam güneş",
+                            Kategori = "Meyve",
+                            OnerilenSulamaAraligiGun = 2
+                        },
+                        new
+                        {
+                            BitkiTuruId = 7,
+                            Ad = "Nane",
+                            BitkiBasinaSuLitre = 0.5m,
+                            GunesIhtiyaci = "Yarı gölge",
+                            Kategori = "Aromatik",
+                            OnerilenSulamaAraligiGun = 2
+                        },
+                        new
+                        {
+                            BitkiTuruId = 8,
+                            Ad = "Patlıcan",
+                            BitkiBasinaSuLitre = 3.0m,
+                            GunesIhtiyaci = "Tam güneş",
+                            Kategori = "Sebze",
+                            OnerilenSulamaAraligiGun = 2
                         });
                 });
 
@@ -178,8 +309,24 @@ namespace AkilliSulama.Data.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("Konum")
+                    b.Property<decimal?>("Boylam")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal?>("Enlem")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Il")
                         .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Ilce")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Konum")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -193,11 +340,16 @@ namespace AkilliSulama.Data.Migrations
 
                     b.HasKey("ParselId");
 
-                    b.HasIndex("KullaniciId");
+                    b.HasIndex("KullaniciId", "Ad")
+                        .IsUnique();
 
                     b.ToTable("Parseller", null, t =>
                         {
                             t.HasCheckConstraint("CK_Parsel_Alan", "[Alan] > 0");
+
+                            t.HasCheckConstraint("CK_Parsel_Boylam", "[Boylam] IS NULL OR ([Boylam] >= -180 AND [Boylam] <= 180)");
+
+                            t.HasCheckConstraint("CK_Parsel_Enlem", "[Enlem] IS NULL OR ([Enlem] >= -90 AND [Enlem] <= 90)");
                         });
 
                     b.HasData(
@@ -206,6 +358,10 @@ namespace AkilliSulama.Data.Migrations
                             ParselId = 1,
                             Ad = "Arka Bahçe",
                             Alan = 50m,
+                            Boylam = 40.498300m,
+                            Enlem = 38.885500m,
+                            Il = "Bingöl",
+                            Ilce = "Merkez",
                             Konum = "Örnek Mahalle",
                             KullaniciId = 1,
                             ToprakTuru = "Tınlı"
@@ -215,6 +371,8 @@ namespace AkilliSulama.Data.Migrations
                             ParselId = 2,
                             Ad = "Sera",
                             Alan = 20m,
+                            Il = "Bingöl",
+                            Ilce = "Merkez",
                             Konum = "Örnek Mahalle",
                             KullaniciId = 1,
                             ToprakTuru = "Kumlu"
@@ -224,6 +382,8 @@ namespace AkilliSulama.Data.Migrations
                             ParselId = 3,
                             Ad = "Balkon",
                             Alan = 5m,
+                            Il = "Bingöl",
+                            Ilce = "Genç",
                             Konum = "Örnek Sokak",
                             KullaniciId = 2,
                             ToprakTuru = "Saksı toprağı"
@@ -374,11 +534,19 @@ namespace AkilliSulama.Data.Migrations
 
             modelBuilder.Entity("AkilliSulama.Entities.Bitki", b =>
                 {
+                    b.HasOne("AkilliSulama.Entities.BitkiTuru", "BitkiTuru")
+                        .WithMany("Bitkiler")
+                        .HasForeignKey("BitkiTuruId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AkilliSulama.Entities.Parsel", "Parsel")
                         .WithMany("Bitkiler")
                         .HasForeignKey("ParselId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BitkiTuru");
 
                     b.Navigation("Parsel");
                 });
@@ -427,6 +595,11 @@ namespace AkilliSulama.Data.Migrations
             modelBuilder.Entity("AkilliSulama.Entities.Bitki", b =>
                 {
                     b.Navigation("SulamaPlanlari");
+                });
+
+            modelBuilder.Entity("AkilliSulama.Entities.BitkiTuru", b =>
+                {
+                    b.Navigation("Bitkiler");
                 });
 
             modelBuilder.Entity("AkilliSulama.Entities.Kullanici", b =>

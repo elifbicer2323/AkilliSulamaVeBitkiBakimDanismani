@@ -1,0 +1,66 @@
+﻿@model AkilliSulama.Web.Models.ParselFormModel
+@{
+    bool yeni = Model.ParselId == 0;
+    ViewData["Title"] = yeni ? "Yeni Parsel" : "Parseli Düzenle";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <h2 class="mb-3">@ViewData["Title"]</h2>
+
+        <form asp-action="@(yeni ? "Ekle" : "Duzenle")" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+            <input type="hidden" asp-for="ParselId" />
+
+            <div class="mb-3">
+                <label asp-for="Ad" class="form-label">Parsel adı</label>
+                <input asp-for="Ad" class="form-control" placeholder="Örn. Arka Bahçe" />
+                <span asp-validation-for="Ad" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Alan" class="form-label">Alan (m²)</label>
+                    <input asp-for="Alan" class="form-control" />
+                    <span asp-validation-for="Alan" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ToprakTuru" class="form-label">Toprak türü</label>
+                    <input asp-for="ToprakTuru" class="form-control" placeholder="Tınlı, Kumlu, Killi..." />
+                </div>
+            </div>
+
+            <h5 class="mt-3">Konum bilgisi</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Il" class="form-label">İl</label>
+                    <input asp-for="Il" class="form-control" />
+                    <span asp-validation-for="Il" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Ilce" class="form-label">İlçe</label>
+                    <input asp-for="Ilce" class="form-control" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Konum" class="form-label">Adres / açıklama</label>
+                <input asp-for="Konum" class="form-control" />
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Enlem" class="form-label">Enlem (isteğe bağlı)</label>
+                    <input asp-for="Enlem" class="form-control" />
+                    <span asp-validation-for="Enlem" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Boylam" class="form-label">Boylam (isteğe bağlı)</label>
+                    <input asp-for="Boylam" class="form-control" />
+                    <span asp-validation-for="Boylam" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-text mb-3">Koordinat girerseniz ikisini birlikte girin. Ondalık için virgül kullanın (ör. 38,8855).</div>
+
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@model AkilliSulama.Web.Models.BitkiFormModel
+@{
+    bool yeni = Model.BitkiId == 0;
+    ViewData["Title"] = yeni ? "Bitki Ekle" : "Bitkiyi Düzenle";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <h2 class="mb-3">@ViewData["Title"]</h2>
+
+        <form asp-action="@(yeni ? "Ekle" : "Duzenle")" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+            <input type="hidden" asp-for="BitkiId" />
+            <input type="hidden" asp-for="ParselId" />
+
+            <div class="mb-3">
+                <label asp-for="BitkiTuruId" class="form-label">Bitki türü</label>
+                <select asp-for="BitkiTuruId" asp-items="(SelectList)ViewBag.Turler" class="form-select">
+                    <option value="0">-- Tür seçin --</option>
+                </select>
+                <span asp-validation-for="BitkiTuruId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Ad" class="form-label">Bitki adı</label>
+                <input asp-for="Ad" class="form-control" placeholder="Örn. Domates - 1. sıra" />
+                <span asp-validation-for="Ad" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Adet" class="form-label">Adet</label>
+                    <input asp-for="Adet" class="form-control" />
+                    <span asp-validation-for="Adet" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EkimTarihi" class="form-label">Ekim tarihi</label>
+                    <input asp-for="EkimTarihi" class="form-control" />
+                    <span asp-validation-for="EkimTarihi" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Notlar" class="form-label">Notlar</label>
+                <textarea asp-for="Notlar" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a asp-controller="Parsel" asp-action="Detay" asp-route-id="@Model.ParselId" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>

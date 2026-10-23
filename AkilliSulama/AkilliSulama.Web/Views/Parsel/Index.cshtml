@@ -1,0 +1,50 @@
+﻿@model List<AkilliSulama.Entities.Parsel>
+@{
+    ViewData["Title"] = "Parsellerim";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Parsellerim</h2>
+    <a asp-action="Ekle" class="btn btn-success">+ Yeni Parsel</a>
+</div>
+
+@if (TempData["Bilgi"] is string bilgi)
+{
+    <div class="alert alert-success">@bilgi</div>
+}
+@if (TempData["Hata"] is string hata)
+{
+    <div class="alert alert-danger">@hata</div>
+}
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">Henüz parseliniz yok. "Yeni Parsel" ile ilk parselinizi ekleyin.</p>
+}
+else
+{
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr><th>Parsel</th><th>Konum</th><th>Alan</th><th>Toprak</th><th>Bitkiler</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td><a asp-action="Detay" asp-route-id="@p.ParselId">@p.Ad</a></td>
+                    <td>@p.Il @(string.IsNullOrEmpty(p.Ilce) ? "" : "/ " + p.Ilce)</td>
+                    <td>@p.Alan.ToString("0.##") m²</td>
+                    <td>@p.ToprakTuru</td>
+                    <td>@p.Bitkiler.Count kayıt, @p.Bitkiler.Sum(b => b.Adet) adet</td>
+                    <td class="text-end">
+                        <a asp-action="Duzenle" asp-route-id="@p.ParselId" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                        <form asp-action="Sil" asp-route-id="@p.ParselId" method="post" class="d-inline"
+                              onsubmit="return confirm('Parsel ve içindeki bitkiler silinsin mi?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
