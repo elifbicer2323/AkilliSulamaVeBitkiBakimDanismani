@@ -100,6 +100,9 @@ namespace AkilliSulama.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("BasarisizGirisSayisi")
+                        .HasColumnType("int");
+
                     b.Property<string>("Eposta")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -108,7 +111,15 @@ namespace AkilliSulama.Data.Migrations
                     b.Property<DateTime>("KayitTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Sifre")
+                    b.Property<DateTime?>("KilitBitisZamani")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("SifreHash")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -130,18 +141,22 @@ namespace AkilliSulama.Data.Migrations
                         {
                             KullaniciId = 1,
                             Ad = "Test",
+                            BasarisizGirisSayisi = 0,
                             Eposta = "test@ornek.com",
                             KayitTarihi = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Sifre = "GECICI-SIFRE",
+                            Rol = "Yonetici",
+                            SifreHash = "100000.QWtpbGxpU3VsYW1hVHN0MQ==.Cf7JGTzY0P9ak3GZy3nznoRSJ/nJ3KB0yIQtUlyHQww=",
                             Soyad = "Kullanici"
                         },
                         new
                         {
                             KullaniciId = 2,
                             Ad = "Deneme",
+                            BasarisizGirisSayisi = 0,
                             Eposta = "deneme@ornek.com",
                             KayitTarihi = new DateTime(2026, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Sifre = "GECICI-SIFRE",
+                            Rol = "Ciftci",
+                            SifreHash = "100000.QWtpbGxpU3VsYW1hRG5tMg==.VCH9gmDqyaNXzXW44a8POmR/rMAQtFFG8byLcDRmSTI=",
                             Soyad = "Kisi"
                         });
                 });

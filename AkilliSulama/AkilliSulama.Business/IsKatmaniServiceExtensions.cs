@@ -10,6 +10,7 @@ public static class IsKatmaniServiceExtensions
     {
         services.AddDataKatmani(connectionString);
         services.AddScoped<ParselServisi>();
+        services.AddScoped<KimlikServisi>();
         return services;
     }
 }

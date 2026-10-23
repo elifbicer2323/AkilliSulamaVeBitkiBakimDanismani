@@ -1,11 +1,13 @@
 ﻿using AkilliSulama.Business;
 using AkilliSulama.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AkilliSulama.Web.Controllers;
 
 // Test amaçlı: CRUD işlemlerini sırayla çalıştırıp sonucu gösterir.
 // Web katmanı veritabanına değil, iş katmanına (ParselServisi) konuşur.
+[Authorize]
 public class ParselTestController : Controller
 {
     private readonly ParselServisi _servis;

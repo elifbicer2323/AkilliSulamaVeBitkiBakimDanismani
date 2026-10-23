@@ -23,7 +23,8 @@ public class AkilliSulamaDbContext : DbContext
             e.Property(x => x.Ad).IsRequired().HasMaxLength(50);
             e.Property(x => x.Soyad).IsRequired().HasMaxLength(50);
             e.Property(x => x.Eposta).IsRequired().HasMaxLength(100);
-            e.Property(x => x.Sifre).IsRequired().HasMaxLength(200);
+            e.Property(x => x.SifreHash).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Rol).IsRequired().HasMaxLength(20);
             // İNDEKS + KISIT: Aynı e-posta ile iki kullanıcı olamaz, e-postayla arama hızlanır
             e.HasIndex(x => x.Eposta).IsUnique();
         });
@@ -86,9 +87,30 @@ public class AkilliSulamaDbContext : DbContext
     // ---------- ÖRNEK (SENTETİK) VERİ — gerçek kişi bilgisi yok (KVKK) ----------
     private static void OrnekVeriEkle(ModelBuilder mb)
     {
+        // Örnek kullanıcılar. Parolalar hash'li saklanıyor:
+        // test@ornek.com   -> Test123!    (Yönetici)
+        // deneme@ornek.com -> Deneme123!  (Çiftçi)
         mb.Entity<Kullanici>().HasData(
-            new Kullanici { KullaniciId = 1, Ad = "Test", Soyad = "Kullanici", Eposta = "test@ornek.com", Sifre = "GECICI-SIFRE", KayitTarihi = new DateTime(2026, 10, 1) },
-            new Kullanici { KullaniciId = 2, Ad = "Deneme", Soyad = "Kisi", Eposta = "deneme@ornek.com", Sifre = "GECICI-SIFRE", KayitTarihi = new DateTime(2026, 10, 2) }
+            new Kullanici
+            {
+                KullaniciId = 1,
+                Ad = "Test",
+                Soyad = "Kullanici",
+                Eposta = "test@ornek.com",
+                SifreHash = "100000.QWtpbGxpU3VsYW1hVHN0MQ==.Cf7JGTzY0P9ak3GZy3nznoRSJ/nJ3KB0yIQtUlyHQww=",
+                Rol = Roller.Yonetici,
+                KayitTarihi = new DateTime(2026, 10, 1)
+            },
+            new Kullanici
+            {
+                KullaniciId = 2,
+                Ad = "Deneme",
+                Soyad = "Kisi",
+                Eposta = "deneme@ornek.com",
+                SifreHash = "100000.QWtpbGxpU3VsYW1hRG5tMg==.VCH9gmDqyaNXzXW44a8POmR/rMAQtFFG8byLcDRmSTI=",
+                Rol = Roller.Ciftci,
+                KayitTarihi = new DateTime(2026, 10, 2)
+            }
         );
 
         mb.Entity<Parsel>().HasData(

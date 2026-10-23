@@ -10,6 +10,7 @@ public static class DataServiceExtensions
     {
         services.AddDbContext<AkilliSulamaDbContext>(options => options.UseSqlServer(connectionString));
         services.AddScoped<ParselRepository>();
+        services.AddScoped<KullaniciRepository>();
         return services;
         
     }

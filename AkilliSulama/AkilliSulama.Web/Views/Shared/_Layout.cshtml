@@ -27,6 +27,28 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark">Merhaba, @User.Identity.Name (@(User.IsInRole("Yonetici") ? "Yönetici" : "Çiftçi"))</span>
+                            </li>
+                            @if (User.IsInRole("Yonetici"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Yonetim" asp-action="Index">Yönetim</a></li>
+                            }
+                            <li class="nav-item">
+                                <form asp-controller="Hesap" asp-action="Cikis" method="post" class="d-inline">
+                                    <button type="submit" class="nav-link btn btn-link text-dark">Çıkış</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Hesap" asp-action="Giris">Giriş</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Hesap" asp-action="Kayit">Kayıt Ol</a></li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
