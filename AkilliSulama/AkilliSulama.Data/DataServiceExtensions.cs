@@ -12,6 +12,7 @@ public static class DataServiceExtensions
         services.AddScoped<ParselRepository>();
         services.AddScoped<KullaniciRepository>();
         services.AddScoped<BitkiRepository>();
+        services.AddScoped<PlanRepository>();
         return services;
         
     }

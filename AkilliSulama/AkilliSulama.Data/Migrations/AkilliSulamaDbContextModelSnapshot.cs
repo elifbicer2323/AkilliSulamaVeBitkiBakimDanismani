@@ -114,9 +114,16 @@ namespace AkilliSulama.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<decimal>("BitkiBasinaGubreGram")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
                     b.Property<decimal>("BitkiBasinaSuLitre")
                         .HasPrecision(6, 2)
                         .HasColumnType("decimal(6,2)");
+
+                    b.Property<int>("GubrelemeAraligiGun")
+                        .HasColumnType("int");
 
                     b.Property<string>("GunesIhtiyaci")
                         .IsRequired()
@@ -140,6 +147,8 @@ namespace AkilliSulama.Data.Migrations
                         {
                             t.HasCheckConstraint("CK_BitkiTuru_Aralik", "[OnerilenSulamaAraligiGun] > 0");
 
+                            t.HasCheckConstraint("CK_BitkiTuru_GubreAralik", "[GubrelemeAraligiGun] > 0");
+
                             t.HasCheckConstraint("CK_BitkiTuru_Su", "[BitkiBasinaSuLitre] > 0");
                         });
 
@@ -148,7 +157,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 1,
                             Ad = "Domates",
+                            BitkiBasinaGubreGram = 10m,
                             BitkiBasinaSuLitre = 3.0m,
+                            GubrelemeAraligiGun = 14,
                             GunesIhtiyaci = "Tam güneş",
                             Kategori = "Sebze",
                             OnerilenSulamaAraligiGun = 2
@@ -157,7 +168,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 2,
                             Ad = "Biber",
+                            BitkiBasinaGubreGram = 8m,
                             BitkiBasinaSuLitre = 2.5m,
+                            GubrelemeAraligiGun = 14,
                             GunesIhtiyaci = "Tam güneş",
                             Kategori = "Sebze",
                             OnerilenSulamaAraligiGun = 2
@@ -166,7 +179,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 3,
                             Ad = "Marul",
+                            BitkiBasinaGubreGram = 5m,
                             BitkiBasinaSuLitre = 1.5m,
+                            GubrelemeAraligiGun = 21,
                             GunesIhtiyaci = "Yarı gölge",
                             Kategori = "Yeşillik",
                             OnerilenSulamaAraligiGun = 1
@@ -175,7 +190,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 4,
                             Ad = "Fesleğen",
+                            BitkiBasinaGubreGram = 2m,
                             BitkiBasinaSuLitre = 0.5m,
+                            GubrelemeAraligiGun = 30,
                             GunesIhtiyaci = "Tam güneş",
                             Kategori = "Aromatik",
                             OnerilenSulamaAraligiGun = 3
@@ -184,7 +201,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 5,
                             Ad = "Salatalık",
+                            BitkiBasinaGubreGram = 10m,
                             BitkiBasinaSuLitre = 3.0m,
+                            GubrelemeAraligiGun = 14,
                             GunesIhtiyaci = "Tam güneş",
                             Kategori = "Sebze",
                             OnerilenSulamaAraligiGun = 1
@@ -193,7 +212,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 6,
                             Ad = "Çilek",
+                            BitkiBasinaGubreGram = 5m,
                             BitkiBasinaSuLitre = 1.0m,
+                            GubrelemeAraligiGun = 21,
                             GunesIhtiyaci = "Tam güneş",
                             Kategori = "Meyve",
                             OnerilenSulamaAraligiGun = 2
@@ -202,7 +223,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 7,
                             Ad = "Nane",
+                            BitkiBasinaGubreGram = 2m,
                             BitkiBasinaSuLitre = 0.5m,
+                            GubrelemeAraligiGun = 30,
                             GunesIhtiyaci = "Yarı gölge",
                             Kategori = "Aromatik",
                             OnerilenSulamaAraligiGun = 2
@@ -211,7 +234,9 @@ namespace AkilliSulama.Data.Migrations
                         {
                             BitkiTuruId = 8,
                             Ad = "Patlıcan",
+                            BitkiBasinaGubreGram = 10m,
                             BitkiBasinaSuLitre = 3.0m,
+                            GubrelemeAraligiGun = 14,
                             GunesIhtiyaci = "Tam güneş",
                             Kategori = "Sebze",
                             OnerilenSulamaAraligiGun = 2
@@ -398,6 +423,10 @@ namespace AkilliSulama.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SulamaPlaniId"));
 
+                    b.Property<string>("Aciklama")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<bool>("AktifMi")
                         .HasColumnType("bit");
 
@@ -407,64 +436,87 @@ namespace AkilliSulama.Data.Migrations
                     b.Property<int>("BitkiId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("GubreAraligiGun")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("GubreMiktariGram")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
                     b.Property<int>("KacGundeBir")
                         .HasColumnType("int");
 
                     b.Property<decimal>("SuMiktari")
-                        .HasPrecision(6, 2)
-                        .HasColumnType("decimal(6,2)");
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<TimeOnly>("SulamaSaati")
                         .HasColumnType("time");
 
                     b.HasKey("SulamaPlaniId");
 
-                    b.HasIndex("BitkiId");
+                    b.HasIndex("BitkiId", "AktifMi");
 
                     b.ToTable("SulamaPlanlari", null, t =>
                         {
+                            t.HasCheckConstraint("CK_Plan_Gubre", "[GubreAraligiGun] IS NULL OR [GubreAraligiGun] > 0");
+
                             t.HasCheckConstraint("CK_Plan_Gun", "[KacGundeBir] > 0");
+
+                            t.HasCheckConstraint("CK_Plan_Su", "[SuMiktari] > 0");
                         });
 
                     b.HasData(
                         new
                         {
                             SulamaPlaniId = 1,
+                            Aciklama = "Örnek plan",
                             AktifMi = true,
                             BaslangicTarihi = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             BitkiId = 1,
+                            GubreAraligiGun = 14,
+                            GubreMiktariGram = 100m,
                             KacGundeBir = 2,
-                            SuMiktari = 3.5m,
+                            SuMiktari = 30m,
                             SulamaSaati = new TimeOnly(7, 0, 0)
                         },
                         new
                         {
                             SulamaPlaniId = 2,
+                            Aciklama = "Örnek plan",
                             AktifMi = true,
                             BaslangicTarihi = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             BitkiId = 2,
+                            GubreAraligiGun = 14,
+                            GubreMiktariGram = 64m,
                             KacGundeBir = 2,
-                            SuMiktari = 2.5m,
+                            SuMiktari = 20m,
                             SulamaSaati = new TimeOnly(7, 30, 0)
                         },
                         new
                         {
                             SulamaPlaniId = 3,
+                            Aciklama = "Örnek plan",
                             AktifMi = true,
                             BaslangicTarihi = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             BitkiId = 3,
+                            GubreAraligiGun = 21,
+                            GubreMiktariGram = 100m,
                             KacGundeBir = 1,
-                            SuMiktari = 1.5m,
+                            SuMiktari = 30m,
                             SulamaSaati = new TimeOnly(18, 0, 0)
                         },
                         new
                         {
                             SulamaPlaniId = 4,
+                            Aciklama = "Örnek plan",
                             AktifMi = true,
                             BaslangicTarihi = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             BitkiId = 4,
+                            GubreAraligiGun = 30,
+                            GubreMiktariGram = 6m,
                             KacGundeBir = 3,
-                            SuMiktari = 0.5m,
+                            SuMiktari = 1.5m,
                             SulamaSaati = new TimeOnly(9, 0, 0)
                         });
                 });

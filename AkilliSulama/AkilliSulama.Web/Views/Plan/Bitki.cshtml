@@ -1,0 +1,120 @@
+﻿@model AkilliSulama.Business.PlanOnizleme
+@{
+    var b = Model.Bitki;
+    var plan = Model.MevcutPlan;
+    var oneri = Model.Oneri;
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+    ViewData["Title"] = b.Ad + " - Plan";
+}
+
+<a asp-controller="Parsel" asp-action="Detay" asp-route-id="@b.ParselId">&larr; @b.Parsel.Ad</a>
+<h2 class="mt-2 mb-3">@b.Ad - Sulama ve Gübreleme Planı</h2>
+
+@if (TempData["Bilgi"] is string bilgi)
+{
+    <div class="alert alert-success">@bilgi</div>
+}
+@if (TempData["Hata"] is string hata)
+{
+    <div class="alert alert-danger">@hata</div>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <strong>Tür:</strong> @b.BitkiTuru.Ad (@b.BitkiTuru.Kategori) ·
+        <strong>Adet:</strong> @b.Adet ·
+        <strong>Parsel:</strong> @b.Parsel.Ad ·
+        <strong>Toprak:</strong> @b.Parsel.ToprakTuru ·
+        <strong>Güneş:</strong> @b.BitkiTuru.GunesIhtiyaci
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card h-100 border-success">
+            <div class="card-header bg-success text-white">Aktif plan</div>
+            <div class="card-body">
+                @if (plan is null)
+                {
+                    <p class="text-muted">Bu bitkinin aktif planı yok. Sağdaki öneriyle plan oluşturabilirsiniz.</p>
+                }
+                else
+                {
+                    <p class="mb-1"><strong>Sulama:</strong> @plan.KacGundeBir günde bir, @plan.SuMiktari.ToString("0.#") L, saat @plan.SulamaSaati.ToString("HH:mm")</p>
+                    <p class="mb-1"><strong>Gübreleme:</strong> @plan.GubreAraligiGun günde bir, @(plan.GubreMiktariGram?.ToString("0.#")) g</p>
+                    <p class="mb-2"><strong>Başlangıç:</strong> @plan.BaslangicTarihi.ToString("dd.MM.yyyy")</p>
+                    @if (!string.IsNullOrEmpty(plan.Aciklama))
+                    {
+                        <small class="text-muted">Uygulanan kurallar:</small>
+                        <ul class="small">
+                            @foreach (var satir in plan.Aciklama.Split('\n'))
+                            {
+                                <li>@satir</li>
+                            }
+                        </ul>
+                    }
+                    <form asp-action="Durdur" method="post" onsubmit="return confirm('Plan durdurulsun mu?');">
+                        <input type="hidden" name="bitkiId" value="@b.BitkiId" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Planı durdur</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header">Önerilen plan (bugünkü koşullara göre)</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Sulama:</strong> @oneri.SulamaAraligiGun günde bir, @oneri.SuMiktariLitre.ToString("0.#") L</p>
+                <p class="mb-2"><strong>Gübreleme:</strong> @oneri.GubreAraligiGun günde bir, @oneri.GubreMiktariGram.ToString("0.#") g</p>
+                <small class="text-muted">Neden?</small>
+                <ul class="small">
+                    @foreach (var k in oneri.UygulananKurallar)
+                    {
+                        <li>@k</li>
+                    }
+                </ul>
+
+                <form asp-action="Olustur" method="post">
+                    <input type="hidden" name="bitkiId" value="@b.BitkiId" />
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small">Başlangıç</label>
+                            <input type="date" name="baslangic" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label class="form-label small">Sulama saati</label>
+                            <input type="time" name="saat" value="07:00" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-text mb-2">Sulama saati 05:00-10:00 veya 17:00-21:00 arasında olmalı.</div>
+                    <button type="submit" class="btn btn-success">@(plan is null ? "Planı oluştur" : "Planı yeniden oluştur")</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-2">Önümüzdeki 14 gün</h4>
+@if (!Model.Takvim.Any())
+{
+    <p class="text-muted">Aktif plan olmadığı için takvim yok.</p>
+}
+else
+{
+    <table class="table table-sm">
+        <thead><tr><th>Tarih</th><th>Saat</th><th>İşlem</th><th>Miktar</th></tr></thead>
+        <tbody>
+            @foreach (var o in Model.Takvim)
+            {
+                <tr class="@(o.Tur == "Gübreleme" ? "table-warning" : "")">
+                    <td>@o.Tarih.ToString("dd MMMM dddd", tr)</td>
+                    <td>@o.Saat.ToString("HH:mm")</td>
+                    <td>@(o.Tur == "Sulama" ? "💧" : "🌱") @o.Tur</td>
+                    <td>@o.Miktar</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

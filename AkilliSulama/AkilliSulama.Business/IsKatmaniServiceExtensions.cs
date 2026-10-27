@@ -12,6 +12,7 @@ public static class IsKatmaniServiceExtensions
         services.AddScoped<ParselServisi>();
         services.AddScoped<KimlikServisi>();
         services.AddScoped<BitkiServisi>();
+        services.AddScoped<PlanServisi>();
         return services;
     }
 }

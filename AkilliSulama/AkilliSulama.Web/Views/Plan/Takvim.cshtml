@@ -1,0 +1,33 @@
+﻿@model List<AkilliSulama.Business.TakvimOlayi>
+@{
+    ViewData["Title"] = "Takvimim";
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+}
+
+<h2 class="mb-1">Takvimim</h2>
+<p class="text-muted">Önümüzdeki 7 günün sulama ve gübreleme işleri (bütün parselleriniz).</p>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Aktif planınız yok. Parsellerim → bitki → <strong>Plan</strong> ile plan oluşturun.</p>
+}
+else
+{
+    @foreach (var gun in Model.GroupBy(o => o.Tarih.Date))
+    {
+        <h5 class="mt-3">@gun.Key.ToString("dd MMMM dddd", tr) @(gun.Key == DateTime.Today ? "(Bugün)" : "")</h5>
+        <table class="table table-sm mb-2">
+            <tbody>
+                @foreach (var o in gun)
+                {
+                    <tr class="@(o.Tur == "Gübreleme" ? "table-warning" : "")">
+                        <td style="width:80px">@o.Saat.ToString("HH:mm")</td>
+                        <td style="width:140px">@(o.Tur == "Sulama" ? "💧" : "🌱") @o.Tur</td>
+                        <td>@o.BitkiAd <span class="text-muted">(@o.ParselAd)</span></td>
+                        <td class="text-end">@o.Miktar</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

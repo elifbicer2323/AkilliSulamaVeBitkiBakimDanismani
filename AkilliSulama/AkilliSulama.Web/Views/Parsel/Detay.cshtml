@@ -63,6 +63,7 @@ else
                     <td>@b.BitkiTuru.GunesIhtiyaci</td>
                     <td class="text-end">
                         <a asp-controller="Bitki" asp-action="Duzenle" asp-route-id="@b.BitkiId" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                        <a asp-controller="Plan" asp-action="Bitki" asp-route-id="@b.BitkiId" class="btn btn-sm btn-success">Plan</a>
                         <form asp-controller="Bitki" asp-action="Sil" asp-route-id="@b.BitkiId" method="post" class="d-inline"
                               onsubmit="return confirm('Bitki silinsin mi?');">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
