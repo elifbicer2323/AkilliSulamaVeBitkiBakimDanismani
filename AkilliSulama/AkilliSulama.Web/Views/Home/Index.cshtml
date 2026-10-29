@@ -1,8 +1,68 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Ana Sayfa";
+    var bugun = ViewBag.Bugun as List<AkilliSulama.Business.TakvimOlayi>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1 class="display-6">🌱 Akıllı Sulama ve Bitki Bakım Danışmanı</h1>
+    <p class="lead">Parsellerinizi ve bitkilerinizi kaydedin; sistem size uygun sulama ve gübreleme planını çıkarsın.</p>
 </div>
+
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <div class="text-center">
+        <a asp-controller="Hesap" asp-action="Giris" class="btn btn-success btn-lg me-2">Giriş Yap</a>
+        <a asp-controller="Hesap" asp-action="Kayit" class="btn btn-outline-success btn-lg">Kayıt Ol</a>
+    </div>
+}
+else
+{
+    <div class="row text-center mb-4">
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="display-6">@ViewBag.ParselSayisi</div><div class="text-muted">Parsel</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="display-6">@ViewBag.BitkiSayisi</div><div class="text-muted">Bitki kaydı</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="display-6">@(bugun?.Count ?? 0)</div><div class="text-muted">Bugünkü iş</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Bugün yapılacaklar</h4>
+    @if (bugun is null || bugun.Count == 0)
+    {
+        <p class="text-muted">Bugün için iş yok. Bitkileriniz için <a asp-controller="Parsel" asp-action="Index">Parsellerim</a> sayfasından plan oluşturabilirsiniz.</p>
+    }
+    else
+    {
+        <table class="table">
+            <tbody>
+                @foreach (var o in bugun)
+                {
+                    <tr class="@(o.Tur == "Gübreleme" ? "table-warning" : "")">
+                        <td style="width:80px">@o.Saat.ToString("HH:mm")</td>
+                        <td style="width:140px">@(o.Tur == "Sulama" ? "💧" : "🌱") @o.Tur</td>
+                        <td>@o.BitkiAd <span class="text-muted">(@o.ParselAd)</span></td>
+                        <td class="text-end">@o.Miktar</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <a asp-controller="Parsel" asp-action="Index" class="btn btn-success me-2">Parsellerim</a>
+    <a asp-controller="Plan" asp-action="Takvim" class="btn btn-outline-success">Haftalık takvim</a>
+}
